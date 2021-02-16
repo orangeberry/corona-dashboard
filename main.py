@@ -1,9 +1,32 @@
-import pandas as pd
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import plotly.express as px
+from data import countries_df
+from builders import make_table
 
-daily_df = pd.read_csv("data/daily_reports.csv")
+stylesheets = [
+    "https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css",
+    "https://fonts.googleapis.com/css2?family=Open+Sans&display=swap",
+]
 
-totals_df = (
-    daily_df[["Confirmed", "Deaths", "Recovered"]].sum().reset_index(name="count")
+app = dash.Dash(__name__, external_stylesheets=stylesheets)
+
+app.layout = html.Div(
+    style={
+        "minHeight": "100vh",
+        "backgroundColor": "#111111",
+        "color": "white",
+        "fontFamily": "Open Sans, sans-serif",
+    },
+    children=[
+        html.Header(
+            style={"textAlign": "center", "paddingTop": "60px"},
+            children=[html.H1("Covid-19 Dashboard", style={"fontSize": "40px"})],
+        ),
+        html.Div(children=[html.Div(children=[make_table(countries_df)])]),
+    ],
 )
 
-totals_df = totals_df.rename(columns={"index": "Condition"})
+if __name__ == "__main__":
+    app.run_server(debug=True)
